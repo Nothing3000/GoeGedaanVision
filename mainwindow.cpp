@@ -12,7 +12,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-    if(this->image) delete this->image;
     delete ui;
 }
 
@@ -24,20 +23,24 @@ void MainWindow::on_browseButton_released()
 
 void MainWindow::on_openButton_released()
 {
-    this->image = new QImage(this->ui->lineEdit->text());
-    if(this->image->isNull())
+    this->image = QImage(this->ui->lineEdit->text());
+    if(!this->image.isNull())
     {
-        delete this->image;
+        this->ui->beforeImageDice->setPixmap(QPixmap::fromImage(this->image.scaledToHeight(160)));
     }
 }
 
 void MainWindow::on_processDiceButton_released()
 {
-    if(this->image != nullptr)
+    QGrayImage grayImage;
+    QBWImage bwImage;
+    QBWImage processedImage;
+    if(!this->image.isNull())
     {
-        if(!this->image->isNull())
-        {
-            this->ui->beforeImageDice->setPixmap(QPixmap::fromImage(*this->image));
-        }
+        grayImage = QGrayImage(image);
+        bwImage = grayImage.toBW(202);
+        processedImage = bwImage.close(3);
+
+        this->ui->afterImageDice->setPixmap(QPixmap::fromImage(processedImage.scaledToHeight(160)));
     }
 }

@@ -46,14 +46,30 @@
      <widget class="QLabel" name="beforeImageDice">
       <property name="geometry">
        <rect>
-        <x>60</x>
-        <y>110</y>
-        <width>58</width>
-        <height>18</height>
+        <x>10</x>
+        <y>10</y>
+        <width>250</width>
+        <height>170</height>
        </rect>
       </property>
       <property name="text">
-       <string>TextLabel</string>
+       <string/>
+      </property>
+      <property name="scaledContents">
+       <bool>false</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="afterImageDice">
+      <property name="geometry">
+       <rect>
+        <x>340</x>
+        <y>10</y>
+        <width>250</width>
+        <height>170</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
       </property>
      </widget>
     </widget>
