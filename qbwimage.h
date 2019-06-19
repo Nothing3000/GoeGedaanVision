@@ -3,35 +3,38 @@
 
 #include <QImage>
 #include <QVector>
+#include <QLinkedList>
+#include <QPair>
 
 class QBWImage : public QImage
 {
 public:
-    struct concompResult
-    {
-        int numObjects;
-        QVector<QSet<int>> pixelList;
-    };
+    typedef QPair<int,int> coord;
+    typedef QLinkedList<coord> objectCoords;
+    typedef QVector<objectCoords> objectsVector;
 public:
     QBWImage();
     QBWImage(int width, int height);
+    QBWImage(int width, int height, objectCoords object);
+    QBWImage(int width, int height, objectsVector objects);
     QBWImage(const QBWImage&) = delete;
     QBWImage& operator=(const QBWImage& qBWImage) = delete;
     QBWImage(QBWImage&& qBWImage) = default;
     QBWImage& operator=(QBWImage&& qBWImage) = default;
     virtual ~QBWImage();
 public:
-    QBWImage erode(int size = 3);
-    QBWImage dilate(int size = 3);
-    QBWImage open(int size = 3);
-    QBWImage close(int size = 3);
-    concompResult concomp();
+    QBWImage erode(int size = 3) const;
+    QBWImage dilate(int size = 3) const;
+    QBWImage open(int size = 3) const;
+    QBWImage close(int size = 3) const;
+    objectsVector conncomp() const;
+    QBWImage areaopen(int size) const;
+    QBWImage operator~() const;
 private:
-    bool erosionCheck(int width, int height, int size);
-    bool dilationCheck(int width, int height, int size);
+    void floodFillAdd(QPair<int,int> coord,objectsVector& result, QImage& labelImage) const;
+    bool erosionCheck(int x, int y, int size) const;
+    bool dilationCheck(int x, int y, int size) const;
     static void cleanupImage(void *info);
-private:
-    QVector<uchar> *imageData;
 };
 
 #endif // QBWIMAGE_H

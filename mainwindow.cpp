@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include <QFileDialog>
 #include <QPixmap>
+#include <QTextStream>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -32,15 +33,38 @@ void MainWindow::on_openButton_released()
 
 void MainWindow::on_processDiceButton_released()
 {
+    QString outText;
+    QTextStream outTextStream(&outText);
+    QBWImage::objectsVector dice;
+    int totalDots = 0;
+    int amountOfDice = 0;
     QGrayImage grayImage;
     QBWImage bwImage;
     QBWImage processedImage;
+    QBWImage dieImage;
     if(!this->image.isNull())
     {
         grayImage = QGrayImage(image);
         bwImage = grayImage.toBW(202);
-        processedImage = bwImage.close(3);
+        processedImage = processedImage.close(7);
+        processedImage = bwImage.areaopen(1900);
+        dice = processedImage.conncomp();
 
-        this->ui->afterImageDice->setPixmap(QPixmap::fromImage(processedImage.scaledToHeight(160)));
+        for(auto die : dice)
+        {
+            outText.clear();
+            int dots;
+            amountOfDice++;
+            dieImage = ~QBWImage(processedImage.width(), processedImage.height(), die);
+            dots = dieImage.conncomp().size()-1;
+            totalDots += dots;
+            outTextStream << "Die " << amountOfDice << ": " << dots;
+            this->ui->outputList->addItem(outText);
+        }
+        outText.clear();
+        outTextStream << "Total: " << totalDots;
+        this->ui->outputList->addItem(outText);
+        this->ui->beforeImageDice->setPixmap(QPixmap::fromImage(processedImage.scaledToHeight(160)));
+
     }
 }
