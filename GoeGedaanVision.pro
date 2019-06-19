@@ -27,11 +27,13 @@ CONFIG += c++11
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-        qvisionimage.cpp
+        qbwimage.cpp \
+        qgrayimage.cpp
 
 HEADERS += \
         mainwindow.h \
-        qvisionimage.h
+        qbwimage.h \
+        qgrayimage.h
 
 FORMS += \
         mainwindow.ui

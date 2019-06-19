@@ -2,7 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "qvisionimage.h"
+#include "qgrayimage.h"
 
 namespace Ui {
 class MainWindow;
@@ -26,7 +26,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    QImage *image;
+    QImage image;
 };
 
 #endif // MAINWINDOW_H
