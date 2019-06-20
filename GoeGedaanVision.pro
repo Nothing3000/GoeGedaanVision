@@ -28,12 +28,14 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
         qbwimage.cpp \
-        qgrayimage.cpp
+        qgrayimage.cpp \
+    qhsvimage.cpp
 
 HEADERS += \
         mainwindow.h \
         qbwimage.h \
-        qgrayimage.h
+        qgrayimage.h \
+    qhsvimage.h
 
 FORMS += \
         mainwindow.ui

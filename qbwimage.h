@@ -4,12 +4,12 @@
 #include <QImage>
 #include <QVector>
 #include <QLinkedList>
-#include <QPair>
+#include <QPoint>
 
 class QBWImage : public QImage
 {
 public:
-    typedef QPair<int,int> coord;
+    typedef QPoint coord;
     typedef QLinkedList<coord> objectCoords;
     typedef QVector<objectCoords> objectsVector;
 public:
@@ -30,8 +30,9 @@ public:
     objectsVector conncomp() const;
     QBWImage areaopen(int size) const;
     QBWImage operator~() const;
+    QRect boundingBox() const;
 private:
-    void floodFillAdd(QPair<int,int> coord,objectsVector& result, QImage& labelImage) const;
+    void floodFillAdd(coord coord,objectsVector& result, QImage& labelImage) const;
     bool erosionCheck(int x, int y, int size) const;
     bool dilationCheck(int x, int y, int size) const;
     static void cleanupImage(void *info);

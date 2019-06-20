@@ -24,6 +24,8 @@ private slots:
 
     void on_processDiceButton_released();
 
+    void on_processPlateButton_released();
+
 private:
     Ui::MainWindow *ui;
     QImage image;
