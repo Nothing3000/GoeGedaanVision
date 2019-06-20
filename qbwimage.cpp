@@ -129,6 +129,70 @@ QBWImage QBWImage::operator~() const
     return newImage;
 }
 
+QRect QBWImage::boundingBox() const
+{
+    QPoint topLeft;
+    QPoint bottomRight;
+
+    bool gotTX = false;
+    bool gotTY = false;
+    bool gotBX = false;
+    bool gotBY = false;
+
+    //Get top Y
+    for(int y = 0; y < this->height() && !gotTY; y++)
+    {
+        for(int x = 0; x < this->width() && !gotTY; x++)
+        {
+            if(this->constScanLine(y)[x] == 255)
+            {
+                topLeft.setY(y);
+                gotTY = true;
+            }
+        }
+    }
+
+    //Get top X
+    for(int x = 0; x < this->width() && !gotTX; x++)
+    {
+        for(int y = 0; y < this->height() && !gotTX; y++)
+        {
+            if(this->constScanLine(y)[x] == 255)
+            {
+                topLeft.setX(x);
+                gotTX = true;
+            }
+        }
+    }
+
+    //Get bottom Y
+    for(int y = this->height(); y > 0 && !gotBY; y--)
+    {
+        for(int x = this->width(); x > 0 && !gotBY; x--)
+        {
+            if(this->constScanLine(y-1)[x-1] == 255)
+            {
+                bottomRight.setY(y-1);
+                gotBY = true;
+            }
+        }
+    }
+
+    //Get bottom X
+    for(int x = this->width(); x > 0 && !gotBX; x--)
+    {
+        for(int y = this->height(); y > 0 && !gotBX; y--)
+        {
+            if(this->constScanLine(y-1)[x-1] == 255)
+            {
+                bottomRight.setX(x-1);
+                gotBX = true;
+            }
+        }
+    }
+    return QRect(topLeft,bottomRight);
+}
+
 void QBWImage::floodFillAdd(coord coord, objectsVector &result, QImage& labelImage) const
 {
     QLinkedList<QBWImage::coord> coordsToCheck;

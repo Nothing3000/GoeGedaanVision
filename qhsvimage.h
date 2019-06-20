@@ -2,22 +2,26 @@
 #define QHSVIMAGE_H
 
 #include <QImage>
+#include <QColor>
 #include <QVector>
 
-#include "hsvpixel.h"
+#include "qbwimage.h"
 
 class QHSVImage
 {
+public:
+    typedef bool (*compareFunction)(const QColor& pixel);
 public:
     QHSVImage();
     QHSVImage(const QImage& image);
     virtual ~QHSVImage();
 public:
-    QImage convertToImage() const;
+    QImage toImage() const;
+    QBWImage toBW(compareFunction fn) const;
 private:
-    void addPixel(const int32_t& red, const int32_t& green, const int32_t& blue);
-private:
-    QVector<QVector<HSVPixel>> imageData;
+    QVector<QVector<QColor>> imageData;
 };
+
+bool isPlateColor(const QColor& pixel);
 
 #endif // QHSVIMAGE_H

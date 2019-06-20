@@ -1,27 +1,21 @@
 #include "qhsvimage.h"
-#include "rgbpixel.h"
 
 QHSVImage::QHSVImage()
 {
 
 }
 
-QHSVImage::QHSVImage(const QImage &image) :
-    imageData(image.height())
+QHSVImage::QHSVImage(const QImage &image)
 {
-    const QImage imageCopy = image.convertToFormat(QImage::Format_RGB32);
-    RGBPixel pixel;
-    const int32_t *pixelData;
-    const int pixelSize = sizeof(int32_t)*3;
+    QColor pixel;
 
-    for(int y = 0; y < imageCopy.height(); y++)
+    for(int y = 0; y < image.height(); y++)
     {
-        this->imageData.push_back(QVector<HSVPixel>(image.width()));
-        for(int x = 0; x < imageCopy.bytesPerLine(); x += pixelSize)
+        this->imageData.push_back(QVector<QColor>());
+        for(int x = 0; x < image.width(); x++)
         {
-            pixelData = reinterpret_cast<const int32_t *>(&imageCopy.constScanLine(y)[x]);
-            pixel = RGBPixel(pixel[0],pixel[1],pixel[2]);
-            this->imageData[y].push_back(pixel);
+            pixel = image.pixelColor(x,y);
+            this->imageData[y].push_back(pixel.toHsv());
         }
     }
 
@@ -32,12 +26,10 @@ QHSVImage::~QHSVImage()
 
 }
 
-QImage QHSVImage::convertToImage() const
+QImage QHSVImage::toImage() const
 {
-    QImage newImage(imageData.size(),imageData[0].size(),QImage::Format_RGB32);
-    RGBPixel pixel;
-    int32_t *pixelData;
-    const int pixelSize = sizeof(int32_t)*3;
+    QImage newImage(imageData[0].size(),imageData.size(),QImage::Format_RGB32);
+    QColor pixel;
 
     if(imageData.isEmpty()) return newImage;
 
@@ -46,13 +38,39 @@ QImage QHSVImage::convertToImage() const
         for(int x = 0; x < imageData[y].size(); x++)
         {
             pixel = this->imageData[y][x];
-            pixelData = reinterpret_cast<int32_t *>(newImage.scanLine(y)[x*pixelSize]);
-
-            pixelData[0] = pixel[0];
-            pixelData[1] = pixel[1];
-            pixelData[2] = pixel[2];
+            newImage.setPixelColor(x,y,pixel.toRgb());
         }
     }
 
     return newImage;
+}
+
+QBWImage QHSVImage::toBW(QHSVImage::compareFunction fn) const
+{
+    QBWImage newImage(imageData[0].size(),imageData.size());
+    QColor pixel;
+    for(int y = 0; y < imageData.size(); y++)
+    {
+        for(int x = 0; x < imageData[y].size(); x++)
+        {
+            pixel = this->imageData[y][x];
+            if(fn(pixel))
+            {
+                newImage.scanLine(y)[x] = 255;
+            }
+        }
+    }
+    return newImage;
+}
+
+bool isPlateColor(const QColor &pixel)
+{
+    if(pixel.hue() > 40 && pixel.hue() < 49)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }

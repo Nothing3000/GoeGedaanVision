@@ -30,6 +30,7 @@ public:
     objectsVector conncomp() const;
     QBWImage areaopen(int size) const;
     QBWImage operator~() const;
+    QRect boundingBox() const;
 private:
     void floodFillAdd(coord coord,objectsVector& result, QImage& labelImage) const;
     bool erosionCheck(int x, int y, int size) const;

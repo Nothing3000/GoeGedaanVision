@@ -3,6 +3,7 @@
 #include <QFileDialog>
 #include <QPixmap>
 #include <QTextStream>
+#include "qhsvimage.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -28,6 +29,7 @@ void MainWindow::on_openButton_released()
     if(!this->image.isNull())
     {
         this->ui->beforeImageDice->setPixmap(QPixmap::fromImage(this->image.scaledToHeight(160)));
+        this->ui->beforeImagePlates->setPixmap(QPixmap::fromImage(this->image.scaledToHeight(160)));
     }
 }
 
@@ -67,4 +69,19 @@ void MainWindow::on_processDiceButton_released()
         this->ui->beforeImageDice->setPixmap(QPixmap::fromImage(processedImage.scaledToHeight(160)));
 
     }
+}
+
+void MainWindow::on_processPlateButton_released()
+{
+    QHSVImage hsvImage(this->image);
+    QBWImage processedImage;
+    QImage plateImage;
+
+    processedImage = hsvImage.toBW(isPlateColor);
+    processedImage = processedImage.areaopen(3000);
+    QRect box = processedImage.boundingBox();
+    plateImage = this->image.copy(box);
+
+
+    this->ui->afterImagePlates->setPixmap(QPixmap::fromImage(plateImage.scaledToHeight(160)));
 }
