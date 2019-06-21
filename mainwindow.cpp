@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include <QFileDialog>
 #include <QTextStream>
+#include <QFontDatabase>
 #include "dice.h"
 #include "plate.h"
 
@@ -10,6 +11,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    QFontDatabase::addApplicationFont (":/font/Kenteken.ttf");
 }
 
 MainWindow::~MainWindow()
@@ -38,6 +40,9 @@ void MainWindow::on_processDiceButton_released()
     Dice dice(this->image);
     QString diceString;
     QTextStream stream(&diceString);
+
+    int dotTotal = 0;
+
     this->ui->beforeImageDice->setPixmap(QPixmap::fromImage(dice.getMarkedImage()).scaledToHeight(160));
     this->ui->outputList->clear();
     for(int i = 0; i < dice.amountOfDice(); i++)
@@ -45,7 +50,11 @@ void MainWindow::on_processDiceButton_released()
         diceString.clear();
         stream << "Dice " << i+1 <<": " << dice.dotsOnDice(i);
         this->ui->outputList->addItem(diceString);
+        dotTotal += dice.dotsOnDice (i);
     }
+    diceString.clear();
+    stream << "Dice total: " << dotTotal;
+    this->ui->outputList->addItem (diceString);
 }
 
 void MainWindow::on_processPlateButton_released()
