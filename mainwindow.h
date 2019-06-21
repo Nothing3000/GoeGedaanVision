@@ -2,7 +2,6 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "qgrayimage.h"
 
 namespace Ui {
 class MainWindow;

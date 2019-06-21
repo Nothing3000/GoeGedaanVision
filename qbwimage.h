@@ -9,14 +9,22 @@
 class QBWImage : public QImage
 {
 public:
-    typedef QPoint coord;
-    typedef QLinkedList<coord> objectCoords;
-    typedef QVector<objectCoords> objectsVector;
+    typedef QPoint Coord;
+    typedef QLinkedList<Coord> ObjectCoords;
+    typedef QVector<ObjectCoords> ObjectsVector;
+    enum findType
+    {
+        top,
+        left,
+        right,
+        bottom
+    };
+
 public:
     QBWImage();
     QBWImage(int width, int height);
-    QBWImage(int width, int height, objectCoords object);
-    QBWImage(int width, int height, objectsVector objects);
+    QBWImage(int width, int height, ObjectCoords object);
+    QBWImage(int width, int height, ObjectsVector objects);
     QBWImage(const QBWImage&) = delete;
     QBWImage& operator=(const QBWImage& qBWImage) = delete;
     QBWImage(QBWImage&& qBWImage) = default;
@@ -27,12 +35,18 @@ public:
     QBWImage dilate(int size = 3) const;
     QBWImage open(int size = 3) const;
     QBWImage close(int size = 3) const;
-    objectsVector conncomp() const;
+    ObjectsVector conncomp() const;
     QBWImage areaopen(int size) const;
     QBWImage operator~() const;
     QRect boundingBox() const;
+    static QRect boundingBox(const ObjectCoords& object);
+    Coord find(findType type) const;
+    QBWImage cleanBorder() const;
+    QBWImage copy() const;
+    QBWImage copy(const QRect& rect) const;
 private:
-    void floodFillAdd(coord coord,objectsVector& result, QImage& labelImage) const;
+    void floodFillAdd(Coord Coord,ObjectsVector& result, QImage& labelImage) const;
+    void floodFillRemove(Coord coord);
     bool erosionCheck(int x, int y, int size) const;
     bool dilationCheck(int x, int y, int size) const;
     static void cleanupImage(void *info);

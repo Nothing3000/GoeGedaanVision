@@ -10,7 +10,7 @@ QBWImage::QBWImage(int width, int height) :
     this->fill(0);
 }
 
-QBWImage::QBWImage(int width, int height, const objectCoords object) :
+QBWImage::QBWImage(int width, int height, const ObjectCoords object) :
     QBWImage(width,height)
 {
     for(auto coord : object)
@@ -19,7 +19,7 @@ QBWImage::QBWImage(int width, int height, const objectCoords object) :
     }
 }
 
-QBWImage::QBWImage(int width, int height, const objectsVector objects) :
+QBWImage::QBWImage(int width, int height, const ObjectsVector objects) :
     QBWImage(width,height)
 {
     for(auto object : objects)
@@ -34,11 +34,11 @@ QBWImage::QBWImage(int width, int height, const objectsVector objects) :
 QBWImage::~QBWImage()
 {}
 
-QBWImage::objectsVector QBWImage::conncomp() const
+QBWImage::ObjectsVector QBWImage::conncomp() const
 {
     QImage tempImage = this->copy();
-    coord currentCoord;
-    objectsVector result;
+    Coord currentCoord;
+    ObjectsVector result;
     for(currentCoord.setY(0); currentCoord.y() < this->height(); currentCoord.ry()++)
     {
         for(currentCoord.setX(0); currentCoord.x() < this->width(); currentCoord.rx()++)
@@ -54,8 +54,8 @@ QBWImage::objectsVector QBWImage::conncomp() const
 
 QBWImage QBWImage::areaopen(int size) const
 {
-    objectsVector objects = conncomp();
-    objectsVector::iterator object = objects.begin();
+    ObjectsVector objects = conncomp();
+    ObjectsVector::iterator object = objects.begin();
     while(object != objects.end())
     {
         if(object->size() < size)
@@ -134,72 +134,145 @@ QRect QBWImage::boundingBox() const
     QPoint topLeft;
     QPoint bottomRight;
 
-    bool gotTX = false;
-    bool gotTY = false;
-    bool gotBX = false;
-    bool gotBY = false;
+    topLeft.setX(find(left).x());
+    topLeft.setY(find(top).y());
 
-    //Get top Y
-    for(int y = 0; y < this->height() && !gotTY; y++)
-    {
-        for(int x = 0; x < this->width() && !gotTY; x++)
-        {
-            if(this->constScanLine(y)[x] == 255)
-            {
-                topLeft.setY(y);
-                gotTY = true;
-            }
-        }
-    }
+    bottomRight.setX(find(right).x());
+    bottomRight.setY(find(bottom).y());
 
-    //Get top X
-    for(int x = 0; x < this->width() && !gotTX; x++)
-    {
-        for(int y = 0; y < this->height() && !gotTX; y++)
-        {
-            if(this->constScanLine(y)[x] == 255)
-            {
-                topLeft.setX(x);
-                gotTX = true;
-            }
-        }
-    }
+    return QRect(topLeft,bottomRight);
+}
 
-    //Get bottom Y
-    for(int y = this->height(); y > 0 && !gotBY; y--)
-    {
-        for(int x = this->width(); x > 0 && !gotBY; x--)
-        {
-            if(this->constScanLine(y-1)[x-1] == 255)
-            {
-                bottomRight.setY(y-1);
-                gotBY = true;
-            }
-        }
-    }
+QRect QBWImage::boundingBox(const QBWImage::ObjectCoords &object)
+{
+    QPoint topLeft(INT_MAX,INT_MAX);
+    QPoint bottomRight;
 
-    //Get bottom X
-    for(int x = this->width(); x > 0 && !gotBX; x--)
+    for(auto coord : object)
     {
-        for(int y = this->height(); y > 0 && !gotBX; y--)
-        {
-            if(this->constScanLine(y-1)[x-1] == 255)
-            {
-                bottomRight.setX(x-1);
-                gotBX = true;
-            }
-        }
+        topLeft.setX(qMin(topLeft.x(),coord.x()));
+        topLeft.setY(qMin(topLeft.y(),coord.y()));
+
+        bottomRight.setX(qMax(bottomRight.x(),coord.x()));
+        bottomRight.setY(qMax(bottomRight.y(),coord.y()));
     }
     return QRect(topLeft,bottomRight);
 }
 
-void QBWImage::floodFillAdd(coord coord, objectsVector &result, QImage& labelImage) const
+QBWImage::Coord QBWImage::find(findType type) const
 {
-    QLinkedList<QBWImage::coord> coordsToCheck;
-    QBWImage::coord currentCoords;
+    Coord coord;
+
+    if(type == top || type == bottom)
+    {
+        for(int y = 0; y < this->height(); y++)
+        {
+            for(int x = 0; x < this->width(); x++)
+            {
+                if(type == top && this->constScanLine(y)[x] == 255)
+                {
+                    coord.setX(x);
+                    coord.setY(y);
+                    return coord;
+                }
+                else if(type == bottom && this->constScanLine(this->height()-y)[this->width()-x] == 255)
+                {
+                    coord.setX(this->width()-x);
+                    coord.setY(this->height()-y);
+                    return coord;
+                }
+            }
+        }
+    }
+    else if(type == left || type == right)
+    {
+        for(int x = 0; x < this->width(); x++)
+        {
+            for(int y = 0; y < this->height(); y++)
+            {
+                if(type == left && this->constScanLine(y)[x] == 255)
+                {
+                    coord.setX(x);
+                    coord.setY(y);
+                    return coord;
+                }
+                else if(type == right && this->constScanLine(this->height()-y)[this->width()-x] == 255)
+                {
+                    coord.setX(this->width()-x);
+                    coord.setY(this->height()-y);
+                    return coord;
+                }
+            }
+        }
+    }
+    return coord;
+}
+
+QBWImage QBWImage::cleanBorder() const
+{
+    QBWImage newImage = this->copy();
+    const QVector<int> verticalPosition = {0,this->height()-1};
+    const QVector<int> horizontalPosition = {0,this->width()-1};
+    for(auto y : verticalPosition)
+    {
+        for(int x = 0; x < newImage.width(); x++)
+        {
+            if(newImage.constScanLine(y)[x] == 255)
+            {
+                newImage.floodFillRemove(Coord(x,y));
+            }
+        }
+    }
+    for(auto x : horizontalPosition)
+    {
+        for(int y = 0; y < this->height(); y++)
+        {
+            if(newImage.constScanLine(y)[x] == 255)
+            {
+                newImage.floodFillRemove(Coord(x,y));
+            }
+        }
+    }
+
+    return newImage;
+
+}
+
+QBWImage QBWImage::copy() const
+{
+    QBWImage newImage(this->width(),this->height());
+
+    for(int y = 0; y < this->height(); y++)
+    {
+        for(int x = 0; x < this->width(); x++)
+        {
+            newImage.scanLine(y)[x] = this->constScanLine(y)[x];
+        }
+    }
+    return newImage;
+}
+
+QBWImage QBWImage::copy(const QRect &rect) const
+{
+    QBWImage newImage(rect.width(),rect.height());
+
+    for(int y = 0; y < rect.height(); y++)
+    {
+        for(int x = 0; x < rect.width(); x++)
+        {
+            newImage.scanLine(y)[x] = this->constScanLine(y+rect.y())[x+rect.x()];
+        }
+    }
+    return newImage;
+}
+
+void QBWImage::floodFillAdd(Coord coord, ObjectsVector &result, QImage& labelImage) const
+{
+    QLinkedList<QBWImage::Coord> coordsToCheck;
+    QBWImage::Coord currentCoords;
     coordsToCheck.push_back(coord);
 
-    result.push_back(QBWImage::objectCoords());
+    result.push_back(QBWImage::ObjectCoords());
     auto& connectedCoords = *result.rbegin();
     while(!coordsToCheck.isEmpty())
     {
@@ -212,24 +285,54 @@ void QBWImage::floodFillAdd(coord coord, objectsVector &result, QImage& labelIma
             connectedCoords.push_back(currentCoords);
             labelImage.scanLine(currentCoords.y())[currentCoords.x()] = 0;
 
-            coordsToCheck.push_back(QBWImage::coord(currentCoords.x(),currentCoords.y()-1));
-            coordsToCheck.push_back(QBWImage::coord(currentCoords.x(),currentCoords.y()+1));
+            coordsToCheck.push_back(QBWImage::Coord(currentCoords.x(),currentCoords.y()-1));
+            coordsToCheck.push_back(QBWImage::Coord(currentCoords.x(),currentCoords.y()+1));
 
-            coordsToCheck.push_back(QBWImage::coord(currentCoords.x()+1,currentCoords.y()));
-            coordsToCheck.push_back(QBWImage::coord(currentCoords.x()+1,currentCoords.y()-1));
-            coordsToCheck.push_back(QBWImage::coord(currentCoords.x()+1,currentCoords.y()+1));
+            coordsToCheck.push_back(QBWImage::Coord(currentCoords.x()+1,currentCoords.y()));
+            coordsToCheck.push_back(QBWImage::Coord(currentCoords.x()+1,currentCoords.y()-1));
+            coordsToCheck.push_back(QBWImage::Coord(currentCoords.x()+1,currentCoords.y()+1));
 
-            coordsToCheck.push_back(QBWImage::coord(currentCoords.x()-1,currentCoords.y()));
-            coordsToCheck.push_back(QBWImage::coord(currentCoords.x()-1,currentCoords.y()-1));
-            coordsToCheck.push_back(QBWImage::coord(currentCoords.x()-1,currentCoords.y()+1));
+            coordsToCheck.push_back(QBWImage::Coord(currentCoords.x()-1,currentCoords.y()));
+            coordsToCheck.push_back(QBWImage::Coord(currentCoords.x()-1,currentCoords.y()-1));
+            coordsToCheck.push_back(QBWImage::Coord(currentCoords.x()-1,currentCoords.y()+1));
+        }
+    }
+}
+
+void QBWImage::floodFillRemove(Coord coord)
+{
+    QLinkedList<QBWImage::Coord> coordsToCheck;
+    QBWImage::Coord currentCoords;
+    coordsToCheck.push_back(coord);
+
+    while(!coordsToCheck.isEmpty())
+    {
+        currentCoords = coordsToCheck.back();
+        coordsToCheck.pop_back();
+        if(currentCoords.x() < 0 || currentCoords.x() >= this->width() ||
+           currentCoords.y() < 0 || currentCoords.y() >= this->height());
+        else if(this->constScanLine(currentCoords.y())[currentCoords.x()] == 255)
+        {
+            this->scanLine(currentCoords.y())[currentCoords.x()] = 0;
+
+            coordsToCheck.push_back(QBWImage::Coord(currentCoords.x(),currentCoords.y()-1));
+            coordsToCheck.push_back(QBWImage::Coord(currentCoords.x(),currentCoords.y()+1));
+
+            coordsToCheck.push_back(QBWImage::Coord(currentCoords.x()+1,currentCoords.y()));
+            coordsToCheck.push_back(QBWImage::Coord(currentCoords.x()+1,currentCoords.y()-1));
+            coordsToCheck.push_back(QBWImage::Coord(currentCoords.x()+1,currentCoords.y()+1));
+
+            coordsToCheck.push_back(QBWImage::Coord(currentCoords.x()-1,currentCoords.y()));
+            coordsToCheck.push_back(QBWImage::Coord(currentCoords.x()-1,currentCoords.y()-1));
+            coordsToCheck.push_back(QBWImage::Coord(currentCoords.x()-1,currentCoords.y()+1));
         }
     }
 }
 
 bool QBWImage::erosionCheck(int x, int y, int size) const
 {
-    coord begin(x-((size-1)/2),y-((size-1)/2));
-    coord end(x+((size-1)/2),y+((size-1)/2));
+    Coord begin(x-((size-1)/2),y-((size-1)/2));
+    Coord end(x+((size-1)/2),y+((size-1)/2));
     if(begin.x() < 0 || begin.y() < 0 || end.x() >= this->width() || end.y() >= this->height())
     {
         return true;
@@ -250,8 +353,8 @@ bool QBWImage::erosionCheck(int x, int y, int size) const
 
 bool QBWImage::dilationCheck(int x, int y, int size) const
 {
-    coord begin(x-((size-1)/2),y-((size-1)/2));
-    coord end(x+((size-1)/2),y+((size-1)/2));
+    Coord begin(x-((size-1)/2),y-((size-1)/2));
+    Coord end(x+((size-1)/2),y+((size-1)/2));
 
     for(int h = begin.y(); h <= end.y(); h++)
     {

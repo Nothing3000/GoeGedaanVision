@@ -65,7 +65,7 @@ QBWImage QHSVImage::toBW(QHSVImage::compareFunction fn) const
 
 bool isPlateColor(const QColor &pixel)
 {
-    if(pixel.hue() > 40 && pixel.hue() < 49)
+    if(pixel.hue() > 40 && pixel.hue() < 60 && pixel.saturation() > 60 && pixel.value() > 50)
     {
         return true;
     }

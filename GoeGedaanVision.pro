@@ -25,20 +25,62 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
+    dice.cpp \
         main.cpp \
         mainwindow.cpp \
+    plate.cpp \
         qbwimage.cpp \
         qgrayimage.cpp \
     qhsvimage.cpp
 
 HEADERS += \
+    dice.h \
         mainwindow.h \
+    plate.h \
         qbwimage.h \
         qgrayimage.h \
     qhsvimage.h
 
 FORMS += \
         mainwindow.ui
+
+OTHER_FILES += \
+        templates/A.bmp \
+        templates/B.bmp \
+        templates/C.bmp \
+        templates/D.bmp \
+        templates/E.bmp \
+        templates/F.bmp \
+        templates/G.bmp \
+        templates/H.bmp \
+        templates/I.bmp \
+        templates/J.bmp \
+        templates/K.bmp \
+        templates/L.bmp \
+        templates/M.bmp \
+        templates/N.bmp \
+        templates/O.bmp \
+        templates/P.bmp \
+        templates/Q.bmp \
+        templates/R.bmp \
+        templates/S.bmp \
+        templates/T.bmp \
+        templates/U.bmp \
+        templates/V.bmp \
+        templates/W.bmp \
+        templates/X.bmp \
+        templates/Y.bmp \
+        templates/Z.bmp \
+        templates/1.bmp \
+        templates/2.bmp \
+        templates/3.bmp \
+        templates/4.bmp \
+        templates/5.bmp \
+        templates/6.bmp \
+        templates/7.bmp \
+        templates/8.bmp \
+        templates/9.bmp \
+        templates/0.bmp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

@@ -1,9 +1,9 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QFileDialog>
-#include <QPixmap>
 #include <QTextStream>
-#include "qhsvimage.h"
+#include "dice.h"
+#include "plate.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -35,53 +35,21 @@ void MainWindow::on_openButton_released()
 
 void MainWindow::on_processDiceButton_released()
 {
-    QString outText;
-    QTextStream outTextStream(&outText);
-    QBWImage::objectsVector dice;
-    int totalDots = 0;
-    int amountOfDice = 0;
-    QGrayImage grayImage;
-    QBWImage bwImage;
-    QBWImage processedImage;
-    QBWImage dieImage;
-    if(!this->image.isNull())
+    Dice dice(this->image);
+    QString diceString;
+    QTextStream stream(&diceString);
+    this->ui->beforeImageDice->setPixmap(QPixmap::fromImage(dice.getMarkedImage()).scaledToHeight(160));
+    this->ui->outputList->clear();
+    for(int i = 0; i < dice.amountOfDice(); i++)
     {
-        grayImage = QGrayImage(image);
-        bwImage = grayImage.toBW(202);
-        processedImage = processedImage.close(7);
-        processedImage = bwImage.areaopen(1900);
-        dice = processedImage.conncomp();
-
-        for(auto die : dice)
-        {
-            outText.clear();
-            int dots;
-            amountOfDice++;
-            dieImage = ~QBWImage(processedImage.width(), processedImage.height(), die);
-            dots = dieImage.conncomp().size()-1;
-            totalDots += dots;
-            outTextStream << "Die " << amountOfDice << ": " << dots;
-            this->ui->outputList->addItem(outText);
-        }
-        outText.clear();
-        outTextStream << "Total: " << totalDots;
-        this->ui->outputList->addItem(outText);
-        this->ui->beforeImageDice->setPixmap(QPixmap::fromImage(processedImage.scaledToHeight(160)));
-
+        diceString.clear();
+        stream << "Dice " << i+1 <<": " << dice.dotsOnDice(i);
+        this->ui->outputList->addItem(diceString);
     }
 }
 
 void MainWindow::on_processPlateButton_released()
 {
-    QHSVImage hsvImage(this->image);
-    QBWImage processedImage;
-    QImage plateImage;
-
-    processedImage = hsvImage.toBW(isPlateColor);
-    processedImage = processedImage.areaopen(3000);
-    QRect box = processedImage.boundingBox();
-    plateImage = this->image.copy(box);
-
-
-    this->ui->afterImagePlates->setPixmap(QPixmap::fromImage(plateImage.scaledToHeight(160)));
+    Plate plate(this->image);
+    this->ui->afterImagePlates->setPixmap(QPixmap::fromImage(plate.getPlate().scaledToHeight(160)));
 }
