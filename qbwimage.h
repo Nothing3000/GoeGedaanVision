@@ -44,6 +44,8 @@ public:
     QBWImage cleanBorder() const;
     QBWImage copy() const;
     QBWImage copy(const QRect& rect) const;
+    double corr2(const QBWImage& compareImage) const;
+    int mean2() const;
 private:
     void floodFillAdd(Coord Coord,ObjectsVector& result, QImage& labelImage) const;
     void floodFillRemove(Coord coord);

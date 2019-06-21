@@ -11,16 +11,21 @@ public:
     Plate();
     Plate(const QImage& image);
 public:
+    const QImage& getMarkedImage() const;
     const QImage& getPlate() const;
+    const QString& getText() const;
 private:
     void process();
     void fillMap();
     void extractPlate();
     void extractSymbols();
+    QChar identifySymbol(const QBWImage& symbol);
 private:
     QImage originalImage;
+    QImage markedImage;
     QImage plateImage;
     QMap<QChar,QBWImage *> symbolMap;
+    QString plateText;
 };
 
 #endif // PLATE_H
