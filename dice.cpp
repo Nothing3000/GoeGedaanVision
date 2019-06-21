@@ -70,12 +70,25 @@ void Dice::markDice()
     QPainter painter(&this->markedImage);
     QPen pen(Qt::red, 10, Qt::SolidLine);
     QRect rectangle;
+    QPointF textPoint;
+    QString number = "";
     painter.setPen(pen);
+
+    QFont font("Kenteken", 100, QFont::Bold);
+    painter.setFont (font);
+
+    int dieCount = 1;
+    int topX = 0, topY = 0, width = 0, height = 0;
 
     for(auto& die : this->dice)
     {
         rectangle = QBWImage::boundingBox(die.coords);
         painter.drawRect(rectangle);
+        rectangle.getRect (&topX, &topY, &width, &height);
+        textPoint.setX (topX + (width/2));
+        textPoint.setY (topY);
+        number = QString::number (dieCount++);
+        painter.drawText (textPoint, number);
     }
 }
 

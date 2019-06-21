@@ -87,6 +87,12 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
+DISTFILES += \
+    font/Kenteken.ttf
+
+RESOURCES += \
+    kentekenfont.qrc
+
 copydata.commands = $(COPY_DIR) $$PWD/templates/ $$OUT_PWD
 first.depends = $(first) copydata
 export(first.depends)
