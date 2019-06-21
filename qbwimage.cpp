@@ -1,5 +1,6 @@
 #include "qbwimage.h"
 #include <QStack>
+#include <math.h>
 
 QBWImage::QBWImage()
 {}
@@ -39,9 +40,9 @@ QBWImage::ObjectsVector QBWImage::conncomp() const
     QImage tempImage = this->copy();
     Coord currentCoord;
     ObjectsVector result;
-    for(currentCoord.setY(0); currentCoord.y() < this->height(); currentCoord.ry()++)
+    for(currentCoord.setX(0); currentCoord.x() < this->width(); currentCoord.rx()++)
     {
-        for(currentCoord.setX(0); currentCoord.x() < this->width(); currentCoord.rx()++)
+        for(currentCoord.setY(0); currentCoord.y() < this->height(); currentCoord.ry()++)
         {
             if(tempImage.constScanLine(currentCoord.y())[currentCoord.x()] == 255)
             {
@@ -264,6 +265,51 @@ QBWImage QBWImage::copy(const QRect &rect) const
         }
     }
     return newImage;
+}
+
+double QBWImage::corr2(const QBWImage &compareImage) const
+{
+    if(this->width() != compareImage.width() || this->height() != compareImage.height())
+    {
+        return 0.0;
+    }
+
+    const int aMean = this->mean2();
+    const int bMean = compareImage.mean2();
+    int aDev,bDev;
+    long devSum = 0;
+    long aDevSquareSum = 0;
+    long bDevSquareSum = 0;
+
+    for(int y = 0; y < this->height(); y++)
+    {
+        for(int x = 0; x < this->width(); x++)
+        {
+            aDev = this->constScanLine(y)[x] - aMean;
+            bDev = compareImage.constScanLine(y)[x] - bMean;
+
+            devSum += aDev*bDev;
+            aDevSquareSum += aDev*aDev;
+            bDevSquareSum += bDev*bDev;
+        }
+    }
+
+    return devSum/sqrt(aDevSquareSum*bDevSquareSum);
+
+}
+
+int QBWImage::mean2() const
+{
+    long totalValue = 0;
+    int amountOfPixels = this->height()*this->width();
+    for(int y = 0; y < this->height(); y++)
+    {
+        for(int x = 0; x < this->width(); x++)
+        {
+            totalValue += this->constScanLine(y)[x];
+        }
+    }
+    return static_cast<int>(totalValue/amountOfPixels);
 }
 
 void QBWImage::floodFillAdd(Coord coord, ObjectsVector &result, QImage& labelImage) const
