@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="tabDice">
      <attribute name="title">
@@ -107,9 +107,9 @@
       <property name="geometry">
        <rect>
         <x>340</x>
-        <y>10</y>
+        <y>90</y>
         <width>250</width>
-        <height>170</height>
+        <height>71</height>
        </rect>
       </property>
       <property name="text">
@@ -117,6 +117,22 @@
       </property>
       <property name="scaledContents">
        <bool>false</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="plateText">
+      <property name="geometry">
+       <rect>
+        <x>336</x>
+        <y>20</y>
+        <width>251</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
       </property>
      </widget>
     </widget>
