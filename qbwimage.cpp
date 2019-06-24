@@ -74,13 +74,13 @@ QBWImage QBWImage::areaopen(int size) const
 QBWImage QBWImage::erode(int size) const
 {
     QBWImage newImage(this->width(),this->height());
-    for(int h = 0; h < this->height(); h++)
+    for(int y = 0; y < this->height(); y++)
     {
-        for(int w = 0; w < this->width(); w++)
+        for(int x = 0; x < this->width(); x++)
         {
-            if(!erosionCheck(w,h,size))
+            if(!erosionCheck(x,y,size))
             {
-                newImage.scanLine(h)[w] = 255;
+                newImage.scanLine(y)[x] = 255;
             }
         }
     }
@@ -90,13 +90,13 @@ QBWImage QBWImage::erode(int size) const
 QBWImage QBWImage::dilate(int size) const
 {
     QBWImage newImage(this->width(),this->height());
-    for(int h = 0; h < this->height(); h++)
+    for(int y = 0; y < this->height(); y++)
     {
-        for(int w = 0; w < this->width(); w++)
+        for(int x = 0; x < this->width(); x++)
         {
-            if(dilationCheck(w,h,size))
+            if(dilationCheck(x,y,size))
             {
-                newImage.scanLine(h)[w] = 255;
+                newImage.scanLine(y)[x] = 255;
             }
         }
     }
@@ -384,11 +384,11 @@ bool QBWImage::erosionCheck(int x, int y, int size) const
         return true;
     }
 
-    for(int h = begin.y(); h <= end.y(); h++)
+    for(int y = begin.y(); y <= end.y(); y++)
     {
-        for(int w = begin.x(); w <= end.x(); w++)
+        for(int x = begin.x(); x <= end.x(); x++)
         {
-            if(this->constScanLine(h)[w] != 255)
+            if(this->constScanLine(y)[x] != 255)
             {
                 return true;
             }
@@ -402,13 +402,13 @@ bool QBWImage::dilationCheck(int x, int y, int size) const
     Coord begin(x-((size-1)/2),y-((size-1)/2));
     Coord end(x+((size-1)/2),y+((size-1)/2));
 
-    for(int h = begin.y(); h <= end.y(); h++)
+    for(int y = begin.y(); y <= end.y(); y++)
     {
-        for(int w = begin.x(); w <= end.x(); w++)
+        for(int x = begin.x(); x <= end.x(); x++)
         {
-            if(!(w < 0 || h < 0 || w >= this->width() || h >= this->height()))
+            if(!(x < 0 || y < 0 || x >= this->width() || y >= this->height()))
             {
-                if(this->constScanLine(h)[w] == 255)
+                if(this->constScanLine(y)[x] == 255)
                 {
                     return true;
                 }
@@ -416,9 +416,4 @@ bool QBWImage::dilationCheck(int x, int y, int size) const
         }
     }
     return false;
-}
-
-void QBWImage::cleanupImage(void *info)
-{
-    delete static_cast<QVector<uchar>*>(info);
 }
