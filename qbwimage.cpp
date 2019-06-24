@@ -277,9 +277,9 @@ double QBWImage::corr2(const QBWImage &compareImage) const
     const int aMean = this->mean2();
     const int bMean = compareImage.mean2();
     int aDev,bDev;
-    long devSum = 0;
-    long aDevSquareSum = 0;
-    long bDevSquareSum = 0;
+    qint64 devSum = 0;
+    qint64 aDevSquareSum = 0;
+    qint64 bDevSquareSum = 0;
 
     for(int y = 0; y < this->height(); y++)
     {
@@ -300,7 +300,7 @@ double QBWImage::corr2(const QBWImage &compareImage) const
 
 int QBWImage::mean2() const
 {
-    long totalValue = 0;
+    qint64 totalValue = 0;
     int amountOfPixels = this->height()*this->width();
     for(int y = 0; y < this->height(); y++)
     {
