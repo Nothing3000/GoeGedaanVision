@@ -5,6 +5,12 @@
 #include "qgrayimage.h"
 #include "qbwimage.h"
 
+/*!
+ * \class Plate
+ * \brief Plate
+ *
+ */
+
 Plate::Plate()
 {
 
@@ -151,12 +157,13 @@ void Plate::extractPlate()
     QPen pen(Qt::red, 10, Qt::SolidLine);
     QHSVImage hsvImage(this->originalImage);
     QBWImage processedImage;
+    const int plateSize = (originalImage.width()/10 * originalImage.height()/5)/2;
 
     painter.setPen(pen);
 
     processedImage = hsvImage.toBW(isPlateColor);
     processedImage = processedImage.cleanBorder();
-    processedImage = processedImage.areaopen(3000);
+    processedImage = processedImage.areaopen(plateSize);
     QRect box = processedImage.boundingBox();
     this->plateImage = this->originalImage.copy(box);
     painter.drawRect(box);

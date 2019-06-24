@@ -314,7 +314,7 @@ int QBWImage::mean2() const
 
 void QBWImage::floodFillAdd(Coord coord, ObjectsVector &result, QImage& labelImage) const
 {
-    QLinkedList<QBWImage::Coord> coordsToCheck;
+    QStack<QBWImage::Coord> coordsToCheck;
     QBWImage::Coord currentCoords;
     coordsToCheck.push_back(coord);
 
@@ -322,8 +322,8 @@ void QBWImage::floodFillAdd(Coord coord, ObjectsVector &result, QImage& labelIma
     auto& connectedCoords = *result.rbegin();
     while(!coordsToCheck.isEmpty())
     {
-        currentCoords = coordsToCheck.back();
-        coordsToCheck.pop_back();
+        currentCoords = coordsToCheck.pop();
+        //coordsToCheck.pop_back();
         if(currentCoords.x() < 0 || currentCoords.x() >= this->width() ||
            currentCoords.y() < 0 || currentCoords.y() >= this->height());
         else if(labelImage.constScanLine(currentCoords.y())[currentCoords.x()] == 255)
@@ -331,16 +331,16 @@ void QBWImage::floodFillAdd(Coord coord, ObjectsVector &result, QImage& labelIma
             connectedCoords.push_back(currentCoords);
             labelImage.scanLine(currentCoords.y())[currentCoords.x()] = 0;
 
-            coordsToCheck.push_back(QBWImage::Coord(currentCoords.x(),currentCoords.y()-1));
-            coordsToCheck.push_back(QBWImage::Coord(currentCoords.x(),currentCoords.y()+1));
+            coordsToCheck.push(QBWImage::Coord(currentCoords.x(),currentCoords.y()-1));
+            coordsToCheck.push(QBWImage::Coord(currentCoords.x(),currentCoords.y()+1));
 
-            coordsToCheck.push_back(QBWImage::Coord(currentCoords.x()+1,currentCoords.y()));
-            coordsToCheck.push_back(QBWImage::Coord(currentCoords.x()+1,currentCoords.y()-1));
-            coordsToCheck.push_back(QBWImage::Coord(currentCoords.x()+1,currentCoords.y()+1));
+            coordsToCheck.push(QBWImage::Coord(currentCoords.x()+1,currentCoords.y()));
+            coordsToCheck.push(QBWImage::Coord(currentCoords.x()+1,currentCoords.y()-1));
+            coordsToCheck.push(QBWImage::Coord(currentCoords.x()+1,currentCoords.y()+1));
 
-            coordsToCheck.push_back(QBWImage::Coord(currentCoords.x()-1,currentCoords.y()));
-            coordsToCheck.push_back(QBWImage::Coord(currentCoords.x()-1,currentCoords.y()-1));
-            coordsToCheck.push_back(QBWImage::Coord(currentCoords.x()-1,currentCoords.y()+1));
+            coordsToCheck.push(QBWImage::Coord(currentCoords.x()-1,currentCoords.y()));
+            coordsToCheck.push(QBWImage::Coord(currentCoords.x()-1,currentCoords.y()-1));
+            coordsToCheck.push(QBWImage::Coord(currentCoords.x()-1,currentCoords.y()+1));
         }
     }
 }
