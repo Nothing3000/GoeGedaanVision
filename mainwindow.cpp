@@ -11,7 +11,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     this->ui->setupUi(this);
-    QFontDatabase::addApplicationFont (":/font/Kenteken.ttf");
+    QFontDatabase::addApplicationFont (":/fontPrefix/font/Kenteken.ttf");
 
     QFont font("Kenteken");
     this->ui->plateText->setFont(font);
@@ -64,6 +64,6 @@ void MainWindow::on_processPlateButton_released()
 {
     Plate plate(this->image);
     this->ui->beforeImagePlates->setPixmap(QPixmap::fromImage(plate.getMarkedImage().scaledToHeight(160)));
-    this->ui->afterImagePlates->setPixmap (QPixmap::fromImage (plate.getPlate ()));
+    this->ui->afterImagePlates->setPixmap (QPixmap::fromImage(plate.getPlate ()));
     this->ui->plateText->setText(plate.getText());
 }

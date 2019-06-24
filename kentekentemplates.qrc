@@ -1,0 +1,40 @@
+<RCC>
+    <qresource prefix="/templatePrefix">
+        <file>templates/0.bmp</file>
+        <file>templates/1.bmp</file>
+        <file>templates/2.bmp</file>
+        <file>templates/3.bmp</file>
+        <file>templates/4.bmp</file>
+        <file>templates/5.bmp</file>
+        <file>templates/6.bmp</file>
+        <file>templates/7.bmp</file>
+        <file>templates/8.bmp</file>
+        <file>templates/9.bmp</file>
+        <file>templates/A.bmp</file>
+        <file>templates/B.bmp</file>
+        <file>templates/C.bmp</file>
+        <file>templates/D.bmp</file>
+        <file>templates/E.bmp</file>
+        <file>templates/F.bmp</file>
+        <file>templates/G.bmp</file>
+        <file>templates/H.bmp</file>
+        <file>templates/I.bmp</file>
+        <file>templates/J.bmp</file>
+        <file>templates/K.bmp</file>
+        <file>templates/L.bmp</file>
+        <file>templates/M.bmp</file>
+        <file>templates/N.bmp</file>
+        <file>templates/O.bmp</file>
+        <file>templates/P.bmp</file>
+        <file>templates/Q.bmp</file>
+        <file>templates/R.bmp</file>
+        <file>templates/S.bmp</file>
+        <file>templates/T.bmp</file>
+        <file>templates/U.bmp</file>
+        <file>templates/V.bmp</file>
+        <file>templates/W.bmp</file>
+        <file>templates/X.bmp</file>
+        <file>templates/Y.bmp</file>
+        <file>templates/Z.bmp</file>
+    </qresource>
+</RCC>
