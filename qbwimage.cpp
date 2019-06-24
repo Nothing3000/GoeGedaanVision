@@ -176,10 +176,10 @@ QBWImage::Coord QBWImage::find(findType type) const
                     coord.setY(y);
                     return coord;
                 }
-                else if(type == bottom && this->constScanLine(this->height()-y)[this->width()-x] == 255)
+                else if(type == bottom && this->constScanLine(this->height()-y-1)[this->width()-x-1] == 255)
                 {
-                    coord.setX(this->width()-x);
-                    coord.setY(this->height()-y);
+                    coord.setX(this->width()-x-1);
+                    coord.setY(this->height()-y-1);
                     return coord;
                 }
             }
@@ -197,10 +197,10 @@ QBWImage::Coord QBWImage::find(findType type) const
                     coord.setY(y);
                     return coord;
                 }
-                else if(type == right && this->constScanLine(this->height()-y)[this->width()-x] == 255)
+                else if(type == right && this->constScanLine(this->height()-y-1)[this->width()-x-1] == 255)
                 {
-                    coord.setX(this->width()-x);
-                    coord.setY(this->height()-y);
+                    coord.setX(this->width()-x-1);
+                    coord.setY(this->height()-y-1);
                     return coord;
                 }
             }
