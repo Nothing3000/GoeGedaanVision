@@ -14,6 +14,7 @@ public:
     const QImage& getMarkedImage() const;
     const QImage& getPlate() const;
     const QString& getText() const;
+    virtual ~Plate();
 private:
     void process();
     void fillMap();
