@@ -102,7 +102,7 @@ void Plate::implementSeries()
         else if (this->serie == 8 || this->serie == 10)
         {
             newPlate.insert(1, '-');
-            newPlate.insert(6, '-');
+            newPlate.insert(5, '-');
         }
         else if (this->serie == 11 || this->serie == 14)
         {
