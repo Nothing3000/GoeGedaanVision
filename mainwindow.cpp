@@ -64,6 +64,6 @@ void MainWindow::on_processPlateButton_released()
 {
     Plate plate(this->image);
     this->ui->beforeImagePlates->setPixmap(QPixmap::fromImage(plate.getMarkedImage().scaledToHeight(160)));
-    this->ui->afterImagePlates->setPixmap (QPixmap::fromImage(plate.getPlate ()));
+    this->ui->afterImagePlates->setPixmap (QPixmap::fromImage(plate.getPlate().scaledToHeight(160)));
     this->ui->plateText->setText(plate.getText());
 }

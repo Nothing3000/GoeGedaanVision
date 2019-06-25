@@ -316,14 +316,13 @@ void QBWImage::floodFillAdd(Coord coord, ObjectsVector &result, QImage& labelIma
 {
     QStack<QBWImage::Coord> coordsToCheck;
     QBWImage::Coord currentCoords;
-    coordsToCheck.push_back(coord);
+    coordsToCheck.push(coord);
 
     result.push_back(QBWImage::ObjectCoords());
     auto& connectedCoords = *result.rbegin();
     while(!coordsToCheck.isEmpty())
     {
         currentCoords = coordsToCheck.pop();
-        //coordsToCheck.pop_back();
         if(currentCoords.x() < 0 || currentCoords.x() >= this->width() ||
            currentCoords.y() < 0 || currentCoords.y() >= this->height());
         else if(labelImage.constScanLine(currentCoords.y())[currentCoords.x()] == 255)
