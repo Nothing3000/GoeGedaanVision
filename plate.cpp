@@ -78,6 +78,8 @@ void Plate::findSerie()
         prevSymbol = symbol;
     }
 
+    symbolTypeList.resize(3);
+
     if(symbolTypeList[0].second == 2 && symbolTypeList[1].first == 4) this->serie = 1;
     else if(symbolTypeList[0].first == 4 && symbolTypeList[1].second == 2) this->serie = 2;
     else if(symbolTypeList[0].second == 4 && symbolTypeList[1].first == 2) this->serie = 5;
