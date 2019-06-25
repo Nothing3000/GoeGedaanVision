@@ -2,14 +2,37 @@
 #include <QStack>
 #include <math.h>
 
+/*!
+ * \class QBWImage
+ * \brief The QBWImage class is a class that provides a way of storing images in a pure black and white format.
+ *
+ * QBWImage provides a way of storing and modifying black and white images.
+ * It supports multiple operation that were implemented according to the vision course.
+ *
+ * \sa QGrayImage, QHSVImage, QImage
+ */
+
+/*!
+ * Constructs a new instance of the class were QImage is null.
+ */
+
 QBWImage::QBWImage()
 {}
 
+/*!
+ * Constructs a new \a QBWImage of width \a width and height \a height.
+ * This image is guaranteed to be filled with zeros (black).
+ */
 QBWImage::QBWImage(int width, int height) :
     QImage(width,height,QImage::Format_Grayscale8)
 {
     this->fill(0);
 }
+
+/*!
+ * Constructs a new \a QBWImage of width \a width and height \a height.
+ * The coordinates stored in \a object will be marked white.
+ */
 
 QBWImage::QBWImage(int width, int height, const ObjectCoords object) :
     QBWImage(width,height)
@@ -19,6 +42,11 @@ QBWImage::QBWImage(int width, int height, const ObjectCoords object) :
         this->scanLine(coord.y())[coord.x()] = 255;
     }
 }
+
+/*!
+ * Constructs a new QBWImage of width \a width and height \a height.
+ * For each object stored in \a objects the coordinates will be marked white.
+ */
 
 QBWImage::QBWImage(int width, int height, const ObjectsVector objects) :
     QBWImage(width,height)
@@ -34,6 +62,11 @@ QBWImage::QBWImage(int width, int height, const ObjectsVector objects) :
 
 QBWImage::~QBWImage()
 {}
+
+/*!
+ * Returns an \a QBWImage::ObjectsVector containing the coordinates of all the connected
+ * components in the image.
+ */
 
 QBWImage::ObjectsVector QBWImage::conncomp() const
 {
@@ -53,6 +86,10 @@ QBWImage::ObjectsVector QBWImage::conncomp() const
     return result;
 }
 
+/*!
+ * Returns a new \a QBWImage with all the connected components with an area larger than \a size filtered out.
+ */
+
 QBWImage QBWImage::areaopen(int size) const
 {
     ObjectsVector objects = conncomp();
@@ -71,6 +108,10 @@ QBWImage QBWImage::areaopen(int size) const
     return QBWImage(this->width(), this->height(), objects);
 }
 
+/*!
+ * Returns a new QBWImage that has been eroded with a sliding window of size \a size.
+ */
+
 QBWImage QBWImage::erode(int size) const
 {
     QBWImage newImage(this->width(),this->height());
@@ -86,6 +127,10 @@ QBWImage QBWImage::erode(int size) const
     }
     return newImage;
 }
+
+/*!
+ * Returns a new QBWImage that has been dilated with a sliding window of size \a size.
+ */
 
 QBWImage QBWImage::dilate(int size) const
 {
@@ -103,12 +148,20 @@ QBWImage QBWImage::dilate(int size) const
     return newImage;
 }
 
+/*!
+ * Returns a new QBWImage that has been opened with a sliding windows of size \a size.
+ */
+
 QBWImage QBWImage::open(int size) const
 {
     QBWImage erodedImage = this->erode(size);
     QBWImage dilatedImage = erodedImage.dilate(size);
     return dilatedImage;
 }
+
+/*!
+ * Returns a new QBWImage that has been closed with a sliding windows of size \a size.
+ */
 
 QBWImage QBWImage::close(int size) const
 {
@@ -117,18 +170,26 @@ QBWImage QBWImage::close(int size) const
     return erodedImage;
 }
 
+/*!
+ * Returns a new image that has been inversed.
+ */
+
 QBWImage QBWImage::operator~() const
 {
     QBWImage newImage(this->width(), this->height());
-    for(int h = 0; h < this->height(); h++)
+    for(int y = 0; y < this->height(); y++)
     {
-        for(int w = 0; w < this->width(); w++)
+        for(int x = 0; x < this->width(); x++)
         {
-            newImage.scanLine(h)[w] = ~this->constScanLine(h)[w];
+            newImage.scanLine(y)[x] = ~this->constScanLine(y)[x];
         }
     }
     return newImage;
 }
+
+/*!
+ * Returns a new QRect that encapsulates all the white parts in the image.
+ */
 
 QRect QBWImage::boundingBox() const
 {
@@ -143,6 +204,10 @@ QRect QBWImage::boundingBox() const
 
     return QRect(topLeft,bottomRight);
 }
+
+/*!
+ * Returns a new QRect that encapsulates the \a object.
+ */
 
 QRect QBWImage::boundingBox(const QBWImage::ObjectCoords &object)
 {
@@ -159,6 +224,15 @@ QRect QBWImage::boundingBox(const QBWImage::ObjectCoords &object)
     }
     return QRect(topLeft,bottomRight);
 }
+
+/*!
+ * Returns a QBWImage::Coord containing the coordinates of the requested \a type.
+ * Options are:
+ * top, returns the coordinate with the highest Y position.
+ * bottom, returns the coordinate with the lowest Y positoin.
+ * left, returns the coordinate with the lowest X position.
+ * right, returns the coordinate with the highest X position.
+ */
 
 QBWImage::Coord QBWImage::find(findType type) const
 {
@@ -209,6 +283,10 @@ QBWImage::Coord QBWImage::find(findType type) const
     return coord;
 }
 
+/*!
+ * Returns a new QBWImage with all the connected components that touch the borders of the image removed.
+ */
+
 QBWImage QBWImage::cleanBorder() const
 {
     QBWImage newImage = this->copy();
@@ -239,6 +317,10 @@ QBWImage QBWImage::cleanBorder() const
 
 }
 
+/*!
+ * Returns a new QBWImage that is an exact copy of this image.
+ */
+
 QBWImage QBWImage::copy() const
 {
     QBWImage newImage(this->width(),this->height());
@@ -253,7 +335,11 @@ QBWImage QBWImage::copy() const
     return newImage;
 }
 
-QBWImage QBWImage::copy(const QRect &rect) const
+/*!
+ * Returns a new QBWImage that is an exact copy of the area defined by \a rect.
+ */
+
+QBWImage QBWImage::copy(const QRect& rect) const
 {
     QBWImage newImage(rect.width(),rect.height());
 
@@ -266,6 +352,11 @@ QBWImage QBWImage::copy(const QRect &rect) const
     }
     return newImage;
 }
+
+/*!
+ * Returns the correlation coefficient between this image and \a compareImage.
+ * Returns 0 if the images are not of equal size.
+ */
 
 double QBWImage::corr2(const QBWImage &compareImage) const
 {
@@ -325,6 +416,7 @@ void QBWImage::floodFillAdd(Coord coord, ObjectsVector &result, QImage& labelIma
         currentCoords = coordsToCheck.pop();
         if(currentCoords.x() < 0 || currentCoords.x() >= this->width() ||
            currentCoords.y() < 0 || currentCoords.y() >= this->height());
+
         else if(labelImage.constScanLine(currentCoords.y())[currentCoords.x()] == 255)
         {
             connectedCoords.push_back(currentCoords);
