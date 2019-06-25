@@ -1,9 +1,27 @@
 #include "qhsvimage.h"
 
+/*!
+ * \class QHSVImage
+ * \brief The QHSVImage class is a class that provides a way of storing images in HSV format.
+ *
+ * QHSVImage provides a way of storing and filtering HSV based images.
+ * It is mostly used to filter out a specific color.
+ *
+ * \sa QBWImage, QGrayImage, QImage
+ */
+
+/*!
+ * Constructs a new instance of the class were imageData is null.
+ */
+
 QHSVImage::QHSVImage()
 {
 
 }
+
+/*!
+ * Constructs a new instance of the class were imageData contains the pixel data of \a image;
+ */
 
 QHSVImage::QHSVImage(const QImage &image)
 {
@@ -26,6 +44,10 @@ QHSVImage::~QHSVImage()
 
 }
 
+/*!
+ * Returns a new \a QImage that is created according to the values in \a imageData.
+ */
+
 QImage QHSVImage::toImage() const
 {
     QImage newImage(imageData[0].size(),imageData.size(),QImage::Format_RGB32);
@@ -45,6 +67,11 @@ QImage QHSVImage::toImage() const
     return newImage;
 }
 
+/*!
+ * Returns a new \a QBWImage using \a fn as a compare function.
+ * (An example is included below)
+ */
+
 QBWImage QHSVImage::toBW(QHSVImage::compareFunction fn) const
 {
     QBWImage newImage(imageData[0].size(),imageData.size());
@@ -62,6 +89,10 @@ QBWImage QHSVImage::toBW(QHSVImage::compareFunction fn) const
     }
     return newImage;
 }
+
+/*!
+ * Returns \c true if the color of the pixel matches the color of a dutch license plate.
+ */
 
 bool isPlateColor(const QColor& pixel)
 {

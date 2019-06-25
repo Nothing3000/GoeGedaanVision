@@ -7,14 +7,27 @@
 
 /*!
  * \class Plate
- * \brief Plate
+ * \brief The Plate class is a class that provides a way of telling which characters are on a Dutch license plate.
  *
+ * Plate provides a way of recognizing and extracting a numberplate from an image.
+ * When extracted, the characters can be extracted and recognized with the use of templates.
+ * The class is also able to recognize all the possible series of the Dutch license plates.
+ *
+ * \sa Dice
+ */
+
+/*!
+ * Constructs a new instance of the class were QImage is null.
  */
 
 Plate::Plate()
-{
+{}
 
-}
+/*!
+ * Constructs a new \a Plate of image \a QImage
+ * The character templates are extracted and placed in the map.
+ * The plate is immediately processed after that.
+ */
 
 Plate::Plate(const QImage& image) :
     originalImage(image)
@@ -22,6 +35,10 @@ Plate::Plate(const QImage& image) :
     fillMap();
     process();
 }
+
+/*!
+ * Deconstructs the \a Plate and deletes each \a QBWImage in the \a symbolMap.
+ */
 
 Plate::~Plate()
 {
@@ -31,20 +48,36 @@ Plate::~Plate()
     }
 }
 
+/*!
+ * Returns an \a QImage that contains the input image where the license plate marked with a rectangle.
+ */
+
 const QImage &Plate::getMarkedImage() const
 {
     return this->markedImage;
 }
+
+/*!
+ * Returns an \a QImage that contains the license plate on its own.
+ */
 
 const QImage &Plate::getPlate() const
 {
     return this->plateImage;
 }
 
+/*!
+ * Returns an \a QString that contains the text that is extracted from the license plate.
+ */
+
 const QString &Plate::getText() const
 {
     return this->plateText;
 }
+
+/*!
+ * Returns an \a int that contains the serie of the license plate.
+ */
 
 int Plate::getSerie() const
 {

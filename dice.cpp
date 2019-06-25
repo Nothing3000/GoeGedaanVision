@@ -2,10 +2,27 @@
 #include "qgrayimage.h"
 #include <QPainter>
 
-Dice::Dice()
-{
+/*!
+ * \class Dice
+ * \brief The Dice class is a class that provides a way of counting the dots per die given in the image
+ *
+ * Dice provides a way of recognizing and extracting dice from an image.
+ * When extracted, the dots per die can be counted and the total dots on all dice.
+ *
+ * \sa Plate
+ */
 
-}
+/*!
+ * Constructs a new instance of the class were QImage is null.
+ */
+
+Dice::Dice()
+{}
+
+/*!
+ * Constructs a new \a Dice of image \a QImage
+ * The dice is immediately processed.
+ */
 
 Dice::Dice(const QImage& image) :
     originalImage(image.copy())
@@ -16,15 +33,27 @@ Dice::Dice(const QImage& image) :
 Dice::~Dice()
 {}
 
+/*!
+ * Returns an \a int with the ammount of dice.
+ */
+
 int Dice::amountOfDice() const
 {
     return dice.size();
 }
 
+/*!
+ * Returns an \a int with the ammount of dots on the die, given by \a dieIndex.
+ */
+
 int Dice::dotsOnDice(int dieIndex) const
 {
     return dice[dieIndex].dots;
 }
+
+/*!
+ * Returns an \a QImage that contains the dice marked with a rectangle and a number.
+ */
 
 const QImage& Dice::getMarkedImage() const
 {
